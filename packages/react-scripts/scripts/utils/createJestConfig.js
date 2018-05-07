@@ -24,12 +24,12 @@ module.exports = (resolve, rootDir, srcRoots) => {
   // TODO: I don't know if it's safe or not to just use / as path separator
   // in Jest configs. We need help from somebody with Windows to determine this.
   const config = {
-    collectCoverageFrom: ['src/**/*.{js,jsx,mjs}'],
+    collectCoverageFrom: ['src/**/*.{js,jsx,mjs,ts,tsx}'],
     setupFiles: [resolve('config/polyfills.js')],
     setupTestFrameworkScriptFile: setupTestsFile,
     testMatch: [
-      '**/__tests__/**/*.{js,jsx,mjs}',
-      '**/?(*.)(spec|test).{js,jsx,mjs}',
+      '**/__tests__/**/*.{js,jsx,mjs,ts,tsx}',
+      '**/?(*.)(spec|test).{js,jsx,mjs,ts,tsx}',
     ],
     // where to search for files/tests
     roots: srcRoots.map(toRelRootDir),
@@ -37,6 +37,7 @@ module.exports = (resolve, rootDir, srcRoots) => {
     testURL: 'http://localhost',
     transform: {
       '^.+\\.(js|jsx|mjs)$': resolve('config/jest/babelTransform.js'),
+      '^.+\\.tsx?$': resolve('config/jest/typescriptTransform.js'),
       '^.+\\.css$': resolve('config/jest/cssTransform.js'),
       '^.+\\.(graphql)$': resolve('config/jest/graphqlTransform.js'),
       '^(?!.*\\.(js|jsx|mjs|css|json|graphql)$)': resolve(
@@ -55,11 +56,20 @@ module.exports = (resolve, rootDir, srcRoots) => {
       'web.js',
       'mjs',
       'js',
-      'json',
       'web.jsx',
       'jsx',
+      'web.ts',
+      'ts',
+      'web.tsx',
+      'tsx',
+      'json',
       'node',
     ],
+    globals: {
+      'ts-jest': {
+        tsConfigFile: paths.appTsTestConfig,
+      },
+    },
   };
   if (rootDir) {
     config.rootDir = rootDir;
